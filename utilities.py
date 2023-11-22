@@ -419,19 +419,17 @@ class NNGLS(torch.nn.Module):
 
     def forward(self, batch):
         """
-        Forward pass of the model.
+        Forward pass of the NNGLS model.
 
         Parameters
         ----------
-        batch (Data): The input batch containing node features and graph structure.
+        batch: pytorch_geometric.data.Data
+            The input batch containing node features and graph structure.
 
         Returns
         -------
-        Tuple: A tuple containing the decorrelated predictions and decorrelated targets.
-
-        Raises
-        ------
-        ValueError: If the input batch is empty.
+        tuple
+            A tuple containing the decorrelated predictions and decorrelated targets.
 
         Notes
         -----
