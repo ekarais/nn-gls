@@ -21,11 +21,11 @@ git clone https://github.com/ekarais/nn-gls.git
 # Navigate to the repository directory
 cd nn-gls
 
-# Create a Conda environment (if applicable)
-conda env create -f conda_environment.yml
-conda activate your_env_name
+# Create a Conda environment
+conda create --name nn-gls --file conda_environment.yaml
+conda activate nn-gls
 
-# Install pip packages (if applicable)
+# Install pip packages
 pip install -r pip_packages.txt
 ```
 
