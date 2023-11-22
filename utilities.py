@@ -3,6 +3,7 @@ from typing import Optional
 import numpy as np
 import torch
 import torch_geometric
+from sklearn.model_selection import train_test_split
 from torch_geometric.nn import MessagePassing
 
 
@@ -155,8 +156,14 @@ def get_covariance_matrices(
 
 
 def generate_samples(
-    num_samples: int, num_dimensions: int, num_neighbors: int, tau: int, sigma: int, phi: int
-) -> torch_geometric.data.Data:
+    num_samples: int,
+    num_dimensions: int,
+    num_neighbors: int,
+    tau: int,
+    sigma: int,
+    phi: int,
+    test_size: float = 0.2,
+) -> tuple[torch_geometric.data.Data, torch_geometric.data.Data]:
     """
     Generate samples for graph-based learning.
 
@@ -174,10 +181,12 @@ def generate_samples(
         The standard deviation for noise distribution.
     phi : float
         The parameter for covariance matrix calculation.
+    test_size : float, optional
+        The proportion of samples to include in the test split (default is 0.2).
 
     Returns
     -------
-    torch_geometric.data.Data
+    tuple[torch_geometric.data.Data, torch_geometric.data.Data]
         The generated samples with covariates, function values, positions, and edges.
     """
 
@@ -194,6 +203,38 @@ def generate_samples(
     )
     epsilons = noise_distribution.sample()
     Y = f_X + epsilons
+
+    X_train, X_test, S_train, S_test, Y_train, Y_test = train_test_split(
+        X, S, Y, test_size=test_size
+    )
+    train_data = convert_to_graph(X_train, S_train, Y_train, num_neighbors)
+    test_data = convert_to_graph(X_test, S_test, Y_test, num_neighbors)
+    return train_data, test_data
+
+
+def convert_to_graph(
+    X: torch.Tensor, S: torch.Tensor, Y: torch.Tensor, num_neighbors: int
+) -> torch_geometric.data.Data:
+    """
+    Convert input data into a graph representation using the torch_geometric library.
+
+    Parameters
+    ----------
+    X : torch.Tensor
+        Input features tensor of shape (num_samples, num_features).
+    S : torch.Tensor
+        Input positions tensor of shape (num_samples, num_dimensions).
+    Y : torch.Tensor
+        Target tensor of shape (num_samples, num_classes).
+    num_neighbors : int
+        Number of nearest neighbors to consider for each point.
+
+    Returns
+    -------
+    torch_geometric.data.Data
+        Graph data object containing the input data and graph structure.
+    """
+    num_samples = X.shape[0]
 
     # Compute the edges of the graph
     distance_matrix = positions_to_pdistances(S)
