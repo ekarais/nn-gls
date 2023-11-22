@@ -44,11 +44,12 @@ pip install -r pip_packages.txt
 - `tutorial.ipynb`: A brief walkthrough showcasing data generation, model fitting and model evaluation.
 
 ## TODO
+- [x] Create some plots for the training procedure.
+- [ ] Fix train-test logic
 - [ ] Improve documentation of `utilities.py`.
 - [ ] Investigate if some gradients should be blocked.
 - [ ] Write unit tests for components of NN-GLS.
 - [ ] Enable training on GPU.
-- [ ] Create some plots for the training procedure.
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
